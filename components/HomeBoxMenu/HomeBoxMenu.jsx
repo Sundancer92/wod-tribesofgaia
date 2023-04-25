@@ -1,0 +1,59 @@
+import Link from "next/link";
+
+import {
+	Box,
+	Paper,
+	Typography,
+	Grid,
+	List,
+	ListItemButton,
+	ListItemText,
+	Divider,
+} from "@mui/material";
+
+export default function HomeBoxMenu() {
+	const handleNewCombat = () => {
+		localStorage.removeItem("roster");
+	};
+
+	return (
+		<Box
+			sx={{
+				bgcolor: "primary.dark",
+				boxShadow: 1,
+				borderRadius: 2,
+				p: 1,
+				mx: "auto",
+				mt: 2,
+				minWidth: 300,
+				width: { xs: 100, md: 200, lg: 300 },
+			}}>
+			<Paper
+				elevation={4}
+				sx={{
+					p: 2,
+				}}>
+				<Grid
+					container
+					direction="column"
+					justifyContent="center"
+					alignItems="center">
+					<List>
+						<Typography variant="h2" align="center">
+							Menú
+						</Typography>
+						<Divider />
+						<ListItemButton sx={{ mx: 2 }}>
+							<Link href="/combat" onClick={handleNewCombat}>
+								NUEVO COMBATE
+							</Link>
+						</ListItemButton>
+						<ListItemButton>
+							<Link href="/combat">REANUDAR COMBATE</Link>
+						</ListItemButton>
+					</List>
+				</Grid>
+			</Paper>
+		</Box>
+	);
+}

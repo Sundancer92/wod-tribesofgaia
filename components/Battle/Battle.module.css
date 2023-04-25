@@ -1,0 +1,11 @@
+.active {
+		/* primary: { */
+			main: #000000;
+			dark: #6F0B38;
+			customTriadA: #28240b ;
+
+		/* secondary: { */
+			main: #D4C25E;
+
+		divider: #ECE4B7;
+}
