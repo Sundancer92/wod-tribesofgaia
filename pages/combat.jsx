@@ -25,12 +25,17 @@ import { useModal } from "../hooks/useModal";
 
 //REDUX
 import { useDispatch, useSelector } from "react-redux";
-import { setRoster, selectRoster } from "../store/slices/combatSlice";
+import {
+	setRoster,
+	selectRoster,
+	selectRound,
+} from "../store/slices/combatSlice";
 
 //---- Component
 export default function combat() {
 	const dispatch = useDispatch();
 	const roster = useSelector(selectRoster);
+	const round = useSelector(selectRound);
 	//------
 	const { isModalOpen, openModal, closeModal } = useModal();
 	//---Control de Turno
@@ -97,7 +102,7 @@ export default function combat() {
 						</Grid>
 						<Divider />
 						<ListItem>
-							<Typography variant="h6">RONDA:</Typography>
+							<Typography variant="h6">RONDA: {round}</Typography>
 						</ListItem>
 					</List>
 				</Grid>

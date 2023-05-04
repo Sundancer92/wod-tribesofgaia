@@ -5,9 +5,14 @@ import { Box, Paper, Grid, Typography, Button } from "@mui/material";
 // REDUX
 import { useDispatch, useSelector } from "react-redux";
 import {
+	selectActivePlayers,
+	selectRoster,
+	selectWaiting,
+	selectFinished,
 	addActivePlayers,
 	removeActivePlayer,
-	selectActivePlayers,
+	setFinished,
+	setNextRound,
 } from "../../../store/slices/combatSlice";
 // Helper
 import { reviver } from "../helpers/instanceReplacerAndReviver";
@@ -16,10 +21,19 @@ export default function BattleCard({ player, index }) {
 	const dispatch = useDispatch();
 	const activePlayers = useSelector(selectActivePlayers);
 	const [char, setChar] = useState(null);
+	const [turns, setTurns] = useState(char?.turns);
 
 	useEffect(() => {
 		setChar(reviver(player));
 	}, [player]);
+
+	useEffect(() => {
+		if (index === 0 && char != "null") {
+			char?.addTurn();
+			setTurns(1);
+		}
+		// setTurns(char?.turns);
+	}, [char]);
 
 	const rageBtn = () => {
 		if (char.turns === 0) {
@@ -28,23 +42,28 @@ export default function BattleCard({ player, index }) {
 		} else {
 			char.addTurn();
 		}
+		setTurns(char.turns);
 	};
 
 	const waitBtn = () => {
-		console.log(player);
+		// dispatch(setNextRound());
+		// console.log(player);
+		console.log("Char: ", char.name);
+		console.log("Turnos: ", char.turns);
 	};
 	const incapacitateBtn = () => {};
 
 	const endTurnBtn = () => {
 		if (char.turns === 1) {
 			dispatch(removeActivePlayer(index));
+			dispatch(setFinished(index));
 			char.minusTurn();
 		} else if (char.turns === 0) {
-			dispatch(removeActivePlayer(index));
 			return;
 		} else {
 			char.minusTurn();
 		}
+		setTurns(char.turns);
 	};
 
 	return (
@@ -76,19 +95,36 @@ export default function BattleCard({ player, index }) {
 								</Grid>
 							</Grid>
 						</Grid>
-						{/* Contenedor Iniciativa */}
-						<Grid item>
-							<Grid container sx={{ textAlign: "center" }}>
-								<Paper sx={{ p: 1, border: 1, borderColor: "divider" }}>
-									<Grid item xs={12}>
-										<Typography>Iniciativa</Typography>
-									</Grid>
-									<Grid item xs={12}>
-										<Typography>{player.initiative}</Typography>
-									</Grid>
-								</Paper>
+						{/* Contenedor Iniciativa y Turnos*/}
+						{turns > 0 ? (
+							<Grid item>
+								<Grid container sx={{ textAlign: "center" }}>
+									<Paper
+										sx={{ p: 1, border: 1, borderColor: "divider" }}>
+										<Grid item xs={12}>
+											<Typography>Acciones</Typography>
+										</Grid>
+										<Grid item xs={12}>
+											<Typography>{turns}</Typography>
+										</Grid>
+									</Paper>
+								</Grid>
 							</Grid>
-						</Grid>
+						) : (
+							<Grid item>
+								<Grid container sx={{ textAlign: "center" }}>
+									<Paper
+										sx={{ p: 1, border: 1, borderColor: "divider" }}>
+										<Grid item xs={12}>
+											<Typography>Iniciativa</Typography>
+										</Grid>
+										<Grid item xs={12}>
+											<Typography>{player.initiative}</Typography>
+										</Grid>
+									</Paper>
+								</Grid>
+							</Grid>
+						)}
 						{/* Contenedor Botones */}
 						<Grid
 							container
