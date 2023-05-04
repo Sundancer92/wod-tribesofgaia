@@ -7,6 +7,7 @@ const initialState = {
 	round: 1,
 	activePlayers: [0],
 	waiting: [],
+	finished: [],
 };
 
 export const combatSlice = createSlice({
@@ -36,6 +37,14 @@ export const combatSlice = createSlice({
 				state.activePlayers = filtered;
 			}
 		},
+		setFinished: (state, action) => {
+			console.log(action.payload);
+		},
+		setNextRound: (state) => {
+			// const newRound = state.round + 1;
+			state.finished = [];
+			state.round = state.round + 1;
+		},
 	},
 	extraReducers: {
 		[HYDRATE]: (state, action) => {
@@ -47,12 +56,19 @@ export const combatSlice = createSlice({
 	},
 });
 
-export const { setRoster, clearRoster, removeActivePlayer, addActivePlayers } =
-	combatSlice.actions;
+export const {
+	setRoster,
+	clearRoster,
+	removeActivePlayer,
+	addActivePlayers,
+	setFinished,
+	setNextRound,
+} = combatSlice.actions;
 // Select states
 export const selectRoster = (state) => state.combatSlice.roster;
 export const selectRound = (state) => state.combatSlice.round;
 export const selectActivePlayers = (state) => state.combatSlice.activePlayers;
 export const selectWaiting = (state) => state.combatSlice.waiting;
+export const selectFinished = (state) => state.combatSlice.finished;
 //--
 export default combatSlice.reducer;
