@@ -10,16 +10,36 @@ import { useState } from "react";
 import { Personaje } from "../../../classes/personaje";
 //--- Helpers
 import { sortByInitiative } from "../helpers/sortByInitiative";
+import { firstRoundActivePlayers } from "../helpers/firstRoundActivePlayers";
 
-export const PersonajeForm = ({
+//--- REDUX
+import { useDispatch, useSelector } from "react-redux";
+import {
 	setRoster,
-	closeModal,
-	roster,
-}) => {
+	selectRoster,
+	setActivePlayers,
+} from "../../../store/slices/combatSlice";
+
+export const PersonajeForm = ({ closeModal }) => {
+	const dispatch = useDispatch();
+	const roster = useSelector(selectRoster);
+
+	// FORM dataState
 	const [name, setName] = useState("");
 	const [team, setTeam] = useState("");
 	const [initiative, setInitiative] = useState("");
-	// const [finished, setfinished] = useState("");
+
+	const tryBtn = () => {
+		console.log("Vos Podes!");
+	};
+
+	const startButton = () => {
+		const order = sortByInitiative([...roster]);
+		const activePlayers = JSON.stringify(firstRoundActivePlayers(order));
+		dispatch(setRoster(activePlayers));
+		localStorage.setItem("roster", activePlayers);
+		closeModal();
+	};
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
@@ -30,11 +50,10 @@ export const PersonajeForm = ({
 		setTeam("");
 		setInitiative("");
 
-		const order = sortByInitiative([...roster, newPersonaje]);
-		// setRoster([...roster, newPersonaje]);
-		setRoster(order);
+		const list = JSON.stringify([...roster, newPersonaje]);
+		dispatch(setRoster(list));
 
-		localStorage.setItem("roster", JSON.stringify(order));
+		localStorage.setItem("roster", list);
 	};
 
 	return (
@@ -119,7 +138,8 @@ export const PersonajeForm = ({
 						sx={{ m: 1 }}
 						variant="contained"
 						color="error"
-						onClick={closeModal}>
+						onClick={tryBtn}>
+						{/* onClick={closeModal}> */}
 						Cancelar
 					</Button>
 					<Button
@@ -127,7 +147,8 @@ export const PersonajeForm = ({
 						variant="contained"
 						color="success"
 						fullWidth
-						onClick={closeModal}>
+						// onClick={closeModal}>
+						onClick={startButton}>
 						Comenzar
 					</Button>
 				</Grid>
