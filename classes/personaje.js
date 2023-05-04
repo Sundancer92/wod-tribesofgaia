@@ -57,11 +57,20 @@ export class Personaje {
 		this.disabled = disabled;
 	}
 
+	// TURNS
 	getTurns() {
 		return this.turns;
 	}
 
 	setTurns(turns) {
 		this.turns = turns;
+	}
+
+	addTurn() {
+		this.turns += 1;
+	}
+
+	minusTurn() {
+		this.turns -= 1;
 	}
 }

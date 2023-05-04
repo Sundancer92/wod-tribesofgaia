@@ -22,52 +22,46 @@ import BattleModalForm from "../components/Battle/BattleModalForm/BattleModalFor
 // Custom Hooks
 import { useModal } from "../hooks/useModal";
 //---- Helpers
-import { firstRoundActivePlayers } from "../components/Battle/helpers/firstRoundActivePlayers";
-// Reducer
-import { turnsReducer } from "../components/Battle/helpers/turnsReducer";
+
+//REDUX
+import { useDispatch, useSelector } from "react-redux";
+import { setRoster, selectRoster } from "../store/slices/combatSlice";
 
 //---- Component
 export default function combat() {
+	const dispatch = useDispatch();
+	const roster = useSelector(selectRoster);
+	//------
 	const { isModalOpen, openModal, closeModal } = useModal();
 	//---Control de Turno
-	// Jugador activo
-	const [playing, setPlaying] = useState([]);
-	// Son los personajes en combate
-	const [roster, setRoster] = useState([]);
-	// Son los jugadores con su turno activo
-	const [activePlayers, setActivePlayers] = useState([]);
-	// Total de Rondas
-	const [round, setRound] = useState(1);
-	// turnsReducer
-	const [turns, dispatch] = useReducer(turnsReducer, roster);
-
 	// Carga la ultima sesion o abre el formulario
 	useEffect(() => {
-		const combatData = localStorage.getItem("roster");
+		const combatData = JSON.parse(localStorage.getItem("roster"));
 		if (combatData) {
-			setRoster(JSON.parse(combatData));
+			const roster = JSON.stringify(combatData);
+			dispatch(setRoster(roster));
 		} else {
 			openModal();
 		}
 	}, []);
 
 	// Prepara por orden de iniciativa a los jugadores
-	useEffect(() => {
-		const activePlayers = firstRoundActivePlayers(roster);
-		setActivePlayers(activePlayers);
-	}, [roster]);
+	// useEffect(() => {
+	// 	const activePlayers = firstRoundActivePlayers(roster);
+	// 	setActivePlayers(activePlayers);
+	// }, [roster]);
 
-	// Escribe los nombres de los jugadores activos
-	useEffect(() => {
-		const playing = roster
-			.map((player, index) => {
-				if (activePlayers.includes(index)) {
-					return player.name;
-				}
-			})
-			.filter((name) => name !== undefined);
-		setPlaying(playing);
-	}, [activePlayers]);
+	// // Escribe los nombres de los jugadores activos
+	// useEffect(() => {
+	// 	const playing = roster
+	// 		.map((player, index) => {
+	// 			if (activePlayers.includes(index)) {
+	// 				return player.name;
+	// 			}
+	// 		})
+	// 		.filter((name) => name !== undefined);
+	// 	setPlaying(playing);
+	// }, [activePlayers]);
 
 	return (
 		<>
@@ -87,7 +81,8 @@ export default function combat() {
 							<Grid item>
 								<ListItem>
 									<Typography variant="h4">
-										Turno: {playing.join(", ")}
+										Turno:
+										{/* {playing.join(", ")} */}
 									</Typography>
 								</ListItem>
 							</Grid>
@@ -102,7 +97,7 @@ export default function combat() {
 						</Grid>
 						<Divider />
 						<ListItem>
-							<Typography variant="h6">RONDA: {round}</Typography>
+							<Typography variant="h6">RONDA:</Typography>
 						</ListItem>
 					</List>
 				</Grid>
@@ -110,30 +105,23 @@ export default function combat() {
 					<List>
 						{roster.map((player, index) => (
 							<ListItem key={index}>
-								<Paper
+								{/* <Paper
 									sx={{
 										border: 1,
 										borderColor: "divider",
 										mx: "auto",
-										...(player.turns >= 1 && {
-											bgcolor: "divider",
-										}),
-									}}>
-									<BattleCard
-										player={player}
-									/>
-								</Paper>
+										// ...(player.turns >= 1 && {
+										// 	bgcolor: "divider",
+										// }),
+									}}> */}
+								<BattleCard player={player} index={index} />
+								{/* </Paper> */}
 							</ListItem>
 						))}
 					</List>
 				</Grid>
 			</Box>
-			<BattleModalForm
-				isModalOpen={isModalOpen}
-				closeModal={closeModal}
-				roster={roster}
-				setRoster={setRoster}
-			/>
+			<BattleModalForm isModalOpen={isModalOpen} closeModal={closeModal} />
 		</>
 	);
 }

@@ -1,11 +1,59 @@
+// REACT
+import { useEffect, useState } from "react";
+// MUI
 import { Box, Paper, Grid, Typography, Button } from "@mui/material";
-//-- Hooks
-import { useState, useEffect, useReducer } from "react";
-//-- Helpers
+// REDUX
+import { useDispatch, useSelector } from "react-redux";
+import {
+	addActivePlayers,
+	removeActivePlayer,
+	selectActivePlayers,
+} from "../../../store/slices/combatSlice";
+// Helper
+import { reviver } from "../helpers/instanceReplacerAndReviver";
 
-export default function BattleCard({ player }) {
+export default function BattleCard({ player, index }) {
+	const dispatch = useDispatch();
+	const activePlayers = useSelector(selectActivePlayers);
+	const [char, setChar] = useState(null);
+
+	useEffect(() => {
+		setChar(reviver(player));
+	}, [player]);
+
+	const rageBtn = () => {
+		if (char.turns === 0) {
+			char.addTurn();
+			dispatch(addActivePlayers(index));
+		} else {
+			char.addTurn();
+		}
+	};
+
+	const waitBtn = () => {
+		console.log(player);
+	};
+	const incapacitateBtn = () => {};
+
+	const endTurnBtn = () => {
+		if (char.turns === 1) {
+			dispatch(removeActivePlayer(index));
+			char.minusTurn();
+		} else if (char.turns === 0) {
+			dispatch(removeActivePlayer(index));
+			return;
+		} else {
+			char.minusTurn();
+		}
+	};
+
 	return (
-		<>
+		<Paper
+			sx={{
+				border: 1,
+				mx: "auto",
+				bgcolor: activePlayers.includes(index) ? "divider" : "#fff",
+			}}>
 			<Box sx={{ m: 1 }}>
 				<Paper
 					sx={{
@@ -29,14 +77,14 @@ export default function BattleCard({ player }) {
 							</Grid>
 						</Grid>
 						{/* Contenedor Iniciativa */}
-						<Grid item sx={{}}>
+						<Grid item>
 							<Grid container sx={{ textAlign: "center" }}>
 								<Paper sx={{ p: 1, border: 1, borderColor: "divider" }}>
 									<Grid item xs={12}>
 										<Typography>Iniciativa</Typography>
 									</Grid>
 									<Grid item xs={12}>
-										<Typography> {player.initiative} </Typography>
+										<Typography>{player.initiative}</Typography>
 									</Grid>
 								</Paper>
 							</Grid>
@@ -49,21 +97,21 @@ export default function BattleCard({ player }) {
 							alignItems="center"
 							align="center">
 							<Grid item xs={6}>
-								<Button>RABIA</Button>
+								<Button onClick={rageBtn}>RABIA</Button>
 							</Grid>
 							<Grid item xs={6}>
-								<Button>Esperar</Button>
+								<Button onClick={waitBtn}>Esperar</Button>
 							</Grid>
 							<Grid item xs={6}>
 								<Button> Incapacitar </Button>
 							</Grid>
 							<Grid item xs={6}>
-								<Button>Terminar</Button>
+								<Button onClick={endTurnBtn}>Terminar</Button>
 							</Grid>
 						</Grid>
 					</Grid>
 				</Paper>
 			</Box>
-		</>
+		</Paper>
 	);
 }

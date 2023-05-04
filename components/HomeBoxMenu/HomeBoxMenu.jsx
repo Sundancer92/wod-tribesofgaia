@@ -1,4 +1,7 @@
 import Link from "next/link";
+// REDUX
+import { useDispatch } from "react-redux";
+import { clearRoster } from "../../store/slices/combatSlice";
 
 import {
 	Box,
@@ -12,8 +15,11 @@ import {
 } from "@mui/material";
 
 export default function HomeBoxMenu() {
+	const dispatch = useDispatch();
+
 	const handleNewCombat = () => {
 		localStorage.removeItem("roster");
+		dispatch(clearRoster());
 	};
 
 	return (
