@@ -30,7 +30,7 @@ export const PersonajeForm = ({ closeModal }) => {
 	const [initiative, setInitiative] = useState("");
 
 	const tryBtn = () => {
-		console.log("Vos Podes!");
+		closeModal();
 	};
 
 	const startButton = () => {
@@ -140,7 +140,7 @@ export const PersonajeForm = ({ closeModal }) => {
 						color="error"
 						onClick={tryBtn}>
 						{/* onClick={closeModal}> */}
-						Cancelar
+						Cerrar
 					</Button>
 					<Button
 						sx={{ m: 1 }}
