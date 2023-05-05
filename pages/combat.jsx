@@ -36,6 +36,9 @@ export default function combat() {
 	const dispatch = useDispatch();
 	const roster = useSelector(selectRoster);
 	const round = useSelector(selectRound);
+	//------ Iniciativa mas alta
+	const valoresIniciativa = roster.map((player) => player.initiative);
+	const iniciativaMasAlta = Math.max(...valoresIniciativa);
 	//------
 	const { isModalOpen, openModal, closeModal } = useModal();
 	//---Control de Turno
@@ -49,24 +52,6 @@ export default function combat() {
 			openModal();
 		}
 	}, []);
-
-	// Prepara por orden de iniciativa a los jugadores
-	// useEffect(() => {
-	// 	const activePlayers = firstRoundActivePlayers(roster);
-	// 	setActivePlayers(activePlayers);
-	// }, [roster]);
-
-	// // Escribe los nombres de los jugadores activos
-	// useEffect(() => {
-	// 	const playing = roster
-	// 		.map((player, index) => {
-	// 			if (activePlayers.includes(index)) {
-	// 				return player.name;
-	// 			}
-	// 		})
-	// 		.filter((name) => name !== undefined);
-	// 	setPlaying(playing);
-	// }, [activePlayers]);
 
 	return (
 		<>
@@ -119,7 +104,11 @@ export default function combat() {
 										// 	bgcolor: "divider",
 										// }),
 									}}> */}
-								<BattleCard player={player} index={index} />
+								<BattleCard
+									player={player}
+									index={index}
+									highestIni={iniciativaMasAlta}
+								/>
 								{/* </Paper> */}
 							</ListItem>
 						))}

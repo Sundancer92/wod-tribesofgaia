@@ -11,15 +11,19 @@ import {
 	selectFinished,
 	addActivePlayers,
 	removeActivePlayer,
+	addRagePlayers,
+	removeRagePlayer,
 	setFinished,
 	setNextRound,
+	selectRagePlayers,
 } from "../../../store/slices/combatSlice";
 // Helper
 import { reviver } from "../helpers/instanceReplacerAndReviver";
 
-export default function BattleCard({ player, index }) {
+export default function BattleCard({ player, index, highestIni }) {
 	const dispatch = useDispatch();
 	const activePlayers = useSelector(selectActivePlayers);
+	const ragePlayers = useSelector(selectRagePlayers);
 	const [char, setChar] = useState(null);
 	const [turns, setTurns] = useState(char?.turns);
 
@@ -28,7 +32,22 @@ export default function BattleCard({ player, index }) {
 	}, [player]);
 
 	useEffect(() => {
-		if (index === 0 && char != "null") {
+		if (
+			activePlayers.includes(index) &&
+			ragePlayers.includes(index) &&
+			char
+		) {
+			char.addTurn();
+			setTurns(char.turns);
+		} else if (activePlayers.includes(index) && char) {
+			char.turns = 1;
+			setTurns(1);
+		}
+	}, [activePlayers]);
+
+	useEffect(() => {
+		if (player.initiative == highestIni && char != "null") {
+			dispatch(addActivePlayers(index));
 			char?.addTurn();
 			setTurns(1);
 		}
@@ -38,7 +57,7 @@ export default function BattleCard({ player, index }) {
 	const rageBtn = () => {
 		if (char.turns === 0) {
 			char.addTurn();
-			dispatch(addActivePlayers(index));
+			dispatch(addRagePlayers(index));
 		} else {
 			char.addTurn();
 		}
@@ -56,7 +75,9 @@ export default function BattleCard({ player, index }) {
 	const endTurnBtn = () => {
 		if (char.turns === 1) {
 			dispatch(removeActivePlayer(index));
-			dispatch(setFinished(index));
+			dispatch(setFinished({ index }));
+			dispatch(removeRagePlayer(index));
+			dispatch(setNextRound());
 			char.minusTurn();
 		} else if (char.turns === 0) {
 			return;
@@ -71,7 +92,11 @@ export default function BattleCard({ player, index }) {
 			sx={{
 				border: 1,
 				mx: "auto",
-				bgcolor: activePlayers.includes(index) ? "divider" : "#fff",
+				bgcolor: activePlayers.includes(index)
+					? "divider"
+					: ragePlayers.includes(index)
+					? "primary.dark"
+					: "#fff",
 			}}>
 			<Box sx={{ m: 1 }}>
 				<Paper
