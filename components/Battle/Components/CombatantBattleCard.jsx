@@ -5,19 +5,29 @@ import {
 	removeFromInitiativeList,
 	selectHighestInitiative,
 	selectInitiativeList,
+	selectRound,
 } from "../../../store/slices/combatSlice";
 
 export default function CombatantBattleCard({ p }) {
 	const dispatch = useDispatch();
 	const highestInitiative = useSelector(selectHighestInitiative);
+	const initiativeList = useSelector(selectInitiativeList);
 	const [char, setChar] = useState(p);
+	const [status, setStatus] = useState(char.status);
 	const [isActive, setActive] = useState(true);
 
+	// useEffect(() => {
+	// 	char.isActive === false ? setActive(false) : "";
+	// }, []);
+
 	useEffect(() => {
-		// console.log("isActive useEffect");
-		// console.log(
-		// 	`Char Initiative: ${char.initiative} and Highest Ini: ${highestInitiative}`,
-		// );
+		console.log(status);
+		if (status === "waitingNextRound" && initiativeList.length === 0) {
+			setStatus("active");
+		}
+	}, [initiativeList]);
+
+	useEffect(() => {
 		if (char.initiative == highestInitiative) {
 			setActive(true);
 		} else {
@@ -35,6 +45,7 @@ export default function CombatantBattleCard({ p }) {
 			setChar({ ...char, extraTurn: true });
 		}
 	};
+
 	const endTurn = () => {
 		console.log("BOTON TERMINAR TURNO FUNCIONA");
 		if (char.turns > 1) {
@@ -51,6 +62,7 @@ export default function CombatantBattleCard({ p }) {
 		console.log(
 			"USAR SPLICE E INDEXOF PARA REMOVER SOLO UN INITIATIVE DE INITIATIVE LIST",
 		);
+		console.log("Char Status State", status);
 		console.log("Char: ", char);
 		console.log("isActive? ", isActive);
 		console.log("highestInitiative", highestInitiative);
@@ -63,13 +75,8 @@ export default function CombatantBattleCard({ p }) {
 				mx: "auto",
 				maxWidth: 515,
 				mt: 0.5,
-				// bgcolor: activePlayers.includes(index)
-				// 	? "divider"
-				// 	: playersWithBonusActions.includes(index)
-				// 	? "primary.dark"
-				// 	: "#fff",
 				bgcolor:
-					isActive && char.turns > 0
+					isActive === true && char.turns > 0 && status === "active"
 						? "divider"
 						: char.turns > 0 && char.extraTurn
 						? "primary.dark"
@@ -100,7 +107,8 @@ export default function CombatantBattleCard({ p }) {
 						{/* Contenedor Iniciativa y Turnos*/}
 						{(isActive === true &&
 							char.initiative == highestInitiative &&
-							char.turns > 0) ||
+							char.turns > 0 &&
+							status === "active") ||
 						char.extraTurn === true ? (
 							<Grid item>
 								<Grid container sx={{ textAlign: "center" }}>
