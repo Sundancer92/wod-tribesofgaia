@@ -1,8 +1,8 @@
 // MUI
 import { Grid, Typography } from "@mui/material";
 // COMPONENTS
-import CombatantForm from "../components/Battle/combatV2Components/CombatantForm.jsx";
-import CombatantBattleCard from "../components/Battle/combatV2Components/CombatantBattleCard.jsx";
+import CombatantForm from "../components/Battle/Components/CombatantForm.jsx";
+import CombatantBattleCard from "../components/Battle/Components/CombatantBattleCard.jsx";
 // CUSTOM HOOKS
 import { useModal } from "../hooks/useModal.js";
 // REDUX
