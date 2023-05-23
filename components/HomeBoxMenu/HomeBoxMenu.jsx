@@ -18,7 +18,8 @@ export default function HomeBoxMenu() {
 	const dispatch = useDispatch();
 
 	const handleNewCombat = () => {
-		localStorage.removeItem("roster");
+		// localStorage.removeItem("roster");
+		// localStorage.removeItem("initiatives");
 		dispatch(clearRoster());
 	};
 
@@ -50,12 +51,12 @@ export default function HomeBoxMenu() {
 						</Typography>
 						<Divider />
 						<ListItemButton sx={{ mx: 2 }}>
-							<Link href="/combat" onClick={handleNewCombat}>
+							<Link href="/combatV2" onClick={handleNewCombat}>
 								NUEVO COMBATE
 							</Link>
 						</ListItemButton>
 						<ListItemButton>
-							<Link href="/combat">REANUDAR COMBATE</Link>
+							<Link href="/combatV2">REANUDAR COMBATE</Link>
 						</ListItemButton>
 					</List>
 				</Grid>

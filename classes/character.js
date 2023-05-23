@@ -1,4 +1,4 @@
-export class Personaje {
+export class Character {
 	constructor(name, team, initiative) {
 		this.name = name;
 		this.team = team;
@@ -6,7 +6,7 @@ export class Personaje {
 		this.finished = false;
 		this.waiting = false;
 		this.disabled = false;
-		this.turns = 0;
+		this.turns = 1;
 	}
 
 	getName() {
@@ -67,10 +67,6 @@ export class Personaje {
 	}
 
 	addTurn() {
-		this.turns += 1;
-	}
-
-	minusTurn() {
-		this.turns -= 1;
+		this.turns++;
 	}
 }
