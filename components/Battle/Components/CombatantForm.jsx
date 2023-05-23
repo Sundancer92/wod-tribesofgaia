@@ -17,12 +17,11 @@ import {
 // FORMIK
 import { useFormik } from "formik";
 import {
-	prepareFirstRound,
 	setRoster,
 	selectRoster,
 	toogleBattleInProgress,
-} from "../../store/slices/combatSlice";
-import { initiativeResolver } from "../Battle/helpers/combatSetup/initiativeResolver";
+} from "../../../store/slices/combatSlice";
+import { initiativeResolver } from "../helpers/combatSetup/initiativeResolver";
 
 export default function CombatantForm({ isModalOpen, closeModal }) {
 	const dispatch = useDispatch();

@@ -5,9 +5,7 @@ import {
 	removeFromInitiativeList,
 	selectHighestInitiative,
 	selectInitiativeList,
-} from "../../store/slices/combatSlice";
-//CLASS
-import { Character } from "../../classes/character";
+} from "../../../store/slices/combatSlice";
 
 export default function CombatantBattleCard({ p }) {
 	const dispatch = useDispatch();

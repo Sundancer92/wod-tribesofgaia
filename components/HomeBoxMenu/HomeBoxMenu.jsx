@@ -51,12 +51,12 @@ export default function HomeBoxMenu() {
 						</Typography>
 						<Divider />
 						<ListItemButton sx={{ mx: 2 }}>
-							<Link href="/combatV2" onClick={handleNewCombat}>
+							<Link href="/battleField" onClick={handleNewCombat}>
 								NUEVO COMBATE
 							</Link>
 						</ListItemButton>
 						<ListItemButton>
-							<Link href="/combatV2">REANUDAR COMBATE</Link>
+							<Link href="/battleField">REANUDAR COMBATE</Link>
 						</ListItemButton>
 					</List>
 				</Grid>
