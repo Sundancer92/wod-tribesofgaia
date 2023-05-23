@@ -1,12 +1,14 @@
 import { createSlice, current } from "@reduxjs/toolkit";
 import { HYDRATE } from "next-redux-wrapper";
-import { reviver } from "../../components/Battle/helpers/instanceReplacerAndReviver";
 
 const initialState = {
+	battleInProgress: false,
 	roster: [],
-	round: 1,
+	round: 0,
+	highestInitiative: "",
+	initiativeList: [],
 	activePlayers: [],
-	ragePlayers: [],
+	playersWithBonusActions: [],
 	waiting: [],
 	finished: [],
 };
@@ -15,12 +17,51 @@ export const combatSlice = createSlice({
 	name: "combatSlice",
 	initialState,
 	reducers: {
+		setHighestInitiative: (state, action) => {
+			state.highestInitiative = action.payload;
+		},
+		toogleBattleInProgress: (state) => {
+			state.battleInProgress = !state.battleInProgress;
+		},
+		setInitiativeList: (state, action) => {
+			state.initiativeList = action.payload;
+		},
+		removeFromInitiativeList: (state, action) => {
+			const playerInitiative = action.payload;
+			const initiativeList = state.initiativeList;
+
+			const findIndexHelper = (element) => element === playerInitiative;
+
+			const indexToRemove = initiativeList.findIndex(findIndexHelper);
+
+			initiativeList.splice(indexToRemove, 1);
+
+			if (initiativeList.length === 0) {
+				state.round = state.round + 1;
+			}
+
+			state.initiativeList = initiativeList;
+		},
 		setRoster: (state, action) => {
-			state.roster = JSON.parse(action.payload);
+			// state.roster = JSON.parse(action.payload);
+			state.roster = action.payload;
 		},
 		clearRoster: (state) => {
+			state.round = 0;
 			state.roster = [];
+			state.initiativeList = [];
+			state.highestInitiative = "";
+			state.battleInProgress = false;
+			state.finished = [];
+			state.activePlayers = [];
+			state.playersWithBonusActions = [];
+			state.waiting = [];
 		},
+
+		addRound: (state) => {
+			state.round = state.round + 1;
+		},
+
 		addActivePlayers: (state, action) => {
 			const playerIndex = action.payload;
 			if (!state.activePlayers.includes(playerIndex)) {
@@ -29,71 +70,31 @@ export const combatSlice = createSlice({
 				return;
 			}
 		},
+
 		removeActivePlayer: (state, action) => {
 			const playerIndex = action.payload;
-			if (current(state.activePlayers).includes(playerIndex)) {
-				const filtered = state.activePlayers.filter(
+			// if (current(state.activePlayers).includes(playerIndex)) {
+			const filtered = state.activePlayers.filter((e) => e !== playerIndex);
+			state.activePlayers = filtered;
+			// }
+		},
+
+		addPlayersWithBonusActions: (state, action) => {
+			state.playersWithBonusActions.push(action.payload);
+		},
+
+		removePlayersWithBonusActions: (state, action) => {
+			const playerIndex = action.payload;
+			if (current(state.playersWithBonusActions).includes(playerIndex)) {
+				const filtered = state.playersWithBonusActions.filter(
 					(e) => e !== playerIndex,
 				);
-				state.activePlayers = filtered;
+				state.playersWithBonusActions = filtered;
 			}
 		},
-		addRagePlayers: (state, action) => {
-			const playerIndex = action.payload;
-			if (!state.ragePlayers.includes(playerIndex)) {
-				state.ragePlayers.push(playerIndex);
-			} else {
-				return;
-			}
-		},
-		removeRagePlayer: (state, action) => {
-			const playerIndex = action.payload;
-			if (current(state.ragePlayers).includes(playerIndex)) {
-				const filtered = state.ragePlayers.filter((e) => e !== playerIndex);
-				state.ragePlayers = filtered;
-			}
-		},
+
 		setFinished: (state, action) => {
-			const playerIndex = action.payload.index;
-			const charIni = current(state.roster[playerIndex]).initiative;
-			const activePlayers = current(state.activePlayers);
-			const roster = current(state.roster);
-
-			// Agrega el indice si debe a FINISHED
-			if (
-				!current(state.finished).includes(playerIndex) &&
-				activePlayers.includes(playerIndex)
-			) {
-				state.finished.push(playerIndex);
-				// console.log("state.FINSHED", current(state.finished));
-			}
-			// console.log(roster);
-			// Prepara los siguientes jugadores por iniciativa
-			if (activePlayers.length === 0) {
-				const initiatives = roster.filter((c) => {
-					return Number(c.initiative) < charIni;
-				});
-
-				// console.log("Iniciativas", initiatives);
-
-				const nextInitiative = Math.max(
-					...initiatives.map((i) => i.initiative),
-				);
-				// console.log("Siguiente iniciativa mas alta", nextInitiative);
-
-				const newPlayers = [];
-
-				// RECORRE ROSTER Y TRAE LAS COINCIDENCIAS DE SIGUIENTE INICIATIVA MAS ALTA
-				for (let i = 0; i < roster.length; i++) {
-					if (roster[i].initiative == nextInitiative) {
-						// console.log(roster[i]);
-						newPlayers.push(i);
-					}
-				}
-				// console.log(activePlayers);
-				state.activePlayers = newPlayers;
-			}
-			return;
+			state.finished.push(action.payload);
 		},
 		setNextRound: (state) => {
 			const rosterLength = current(state.roster).length;
@@ -119,10 +120,15 @@ export const {
 	clearRoster,
 	addActivePlayers,
 	removeActivePlayer,
-	addRagePlayers,
-	removeRagePlayer,
+	addPlayersWithBonusActions,
+	removePlayersWithBonusActions,
 	setFinished,
 	setNextRound,
+	addRound,
+	setInitiativeList,
+	removeFromInitiativeList,
+	toogleBattleInProgress,
+	setHighestInitiative,
 } = combatSlice.actions;
 // Select states
 export const selectRoster = (state) => state.combatSlice.roster;
@@ -130,6 +136,12 @@ export const selectRound = (state) => state.combatSlice.round;
 export const selectActivePlayers = (state) => state.combatSlice.activePlayers;
 export const selectWaiting = (state) => state.combatSlice.waiting;
 export const selectFinished = (state) => state.combatSlice.finished;
-export const selectRagePlayers = (state) => state.combatSlice.ragePlayers;
+export const selectPlayersWithBonusActions = (state) =>
+	state.combatSlice.playersWithBonusActions;
+export const selectInitiativeList = (state) => state.combatSlice.initiativeList;
+export const selectBattleInProgress = (state) =>
+	state.combatSlice.battleInProgress;
+export const selectHighestInitiative = (state) =>
+	state.combatSlice.highestInitiative;
 //--
 export default combatSlice.reducer;

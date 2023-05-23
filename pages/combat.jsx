@@ -3,19 +3,14 @@ import { useState, useEffect, useReducer } from "react";
 //---- MUI
 import {
 	Box,
-	Paper,
 	Typography,
 	Grid,
 	List,
-	ListItemButton,
-	ListItemText,
 	Divider,
 	ListItem,
-	Fab,
 	Button,
 } from "@mui/material";
 //---- ICONS
-import AddIcon from "@mui/icons-material/Add";
 // Componentes
 import BattleCard from "../components/Battle/BattleCard/BattleCard";
 import BattleModalForm from "../components/Battle/BattleModalForm/BattleModalForm";
@@ -27,27 +22,45 @@ import { useModal } from "../hooks/useModal";
 import { useDispatch, useSelector } from "react-redux";
 import {
 	setRoster,
+	setInitiativeList,
 	selectRoster,
 	selectRound,
+	selectPlayersWithBonusActions,
+	selectActivePlayers,
+	selectFinished,
 } from "../store/slices/combatSlice";
 
 //---- Component
 export default function combat() {
+	// REDUX
 	const dispatch = useDispatch();
-	const roster = useSelector(selectRoster);
+
 	const round = useSelector(selectRound);
-	//------ Iniciativa mas alta
-	const valoresIniciativa = roster.map((player) => player.initiative);
-	const iniciativaMasAlta = Math.max(...valoresIniciativa);
+	const roster = useSelector(selectRoster);
+	const finished = useSelector(selectFinished);
+	const activePlayers = useSelector(selectActivePlayers);
+	const playersWithBonusActions = useSelector(selectPlayersWithBonusActions);
 	//------
 	const { isModalOpen, openModal, closeModal } = useModal();
 	//---Control de Turno
+	useEffect(() => {
+		if (
+			finished.lenght === roster.length &&
+			activePlayers.lenght === 0 &&
+			playersWithBonusActions.length === 0
+		) {
+			console.log("Estamos para un nuevo round");
+		}
+	}, [finished]);
 	// Carga la ultima sesion o abre el formulario
 	useEffect(() => {
-		const combatData = JSON.parse(localStorage.getItem("roster"));
-		if (combatData) {
-			const roster = JSON.stringify(combatData);
-			dispatch(setRoster(roster));
+		const combatData = {
+			roster: localStorage.getItem("roster"),
+			initiatives: JSON.parse(localStorage.getItem("initiatives")),
+		};
+		if (combatData.roster) {
+			dispatch(setRoster(combatData.roster));
+			dispatch(setInitiativeList(combatData.initiatives));
 		} else {
 			openModal();
 		}
@@ -104,11 +117,7 @@ export default function combat() {
 										// 	bgcolor: "divider",
 										// }),
 									}}> */}
-								<BattleCard
-									player={player}
-									index={index}
-									highestIni={iniciativaMasAlta}
-								/>
+								<BattleCard player={player} index={index} />
 								{/* </Paper> */}
 							</ListItem>
 						))}

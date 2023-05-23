@@ -1,3 +1,4 @@
+//--- MUI
 import {
 	Grid,
 	Button,
@@ -5,56 +6,67 @@ import {
 	InputLabel,
 	OutlinedInput,
 } from "@mui/material";
+//--- Formik
+import { useFormik } from "formik";
+//--- React
 import { useState } from "react";
 //--- Class
-import { Personaje } from "../../../classes/personaje";
+import { Personaje } from "../../../classes/character";
 //--- Helpers
-import { sortByInitiative } from "../helpers/sortByInitiative";
-import { firstRoundActivePlayers } from "../helpers/firstRoundActivePlayers";
+import { sortByInitiative } from "../helpers/combatSetup/sortByInitiative";
+import { playerOrderResolver } from "../helpers/combatSetup/playerOrderResolver";
 
 //--- REDUX
 import { useDispatch, useSelector } from "react-redux";
 import {
 	setRoster,
 	selectRoster,
-	setActivePlayers,
+	selectInitiativeList,
+	prepareFirstRound,
+	setInitiativeList,
 } from "../../../store/slices/combatSlice";
 
 export const PersonajeForm = ({ closeModal }) => {
 	const dispatch = useDispatch();
 	const roster = useSelector(selectRoster);
-
-	// FORM dataState
-	const [name, setName] = useState("");
-	const [team, setTeam] = useState("");
-	const [initiative, setInitiative] = useState("");
+	const initiativeList = useSelector(selectInitiativeList);
 
 	const tryBtn = () => {
 		closeModal();
 	};
 
 	const startButton = () => {
-		const order = sortByInitiative([...roster]);
-		const activePlayers = JSON.stringify(firstRoundActivePlayers(order));
-		dispatch(setRoster(activePlayers));
-		localStorage.setItem("roster", activePlayers);
+		// Roster ordenado
+		const rosterOrder = sortByInitiative(roster);
+		const firstToPlay =
+			playerOrderResolver(rosterOrder).highestInitiativePlayers;
+		const initiatives = playerOrderResolver(rosterOrder).valoresIniciativa;
+
+		dispatch(setInitiativeList(initiatives));
+		dispatch(prepareFirstRound(firstToPlay));
+		dispatch(setRoster(JSON.stringify(rosterOrder)));
+		// LOCAL STORAGE
+		localStorage.setItem("roster", JSON.stringify(rosterOrder));
+		localStorage.setItem("initiatives", JSON.stringify(initiatives));
 		closeModal();
 	};
 
-	const handleSubmit = (event) => {
-		event.preventDefault();
-
-		const newPersonaje = new Personaje(name, team, initiative);
-		// onSubmit(newPersonaje);
-		setName("");
-		setTeam("");
-		setInitiative("");
-
-		const list = JSON.stringify([...roster, newPersonaje]);
-		dispatch(setRoster(list));
-
-		localStorage.setItem("roster", list);
+	const initialValues = {
+		charName: "",
+		charTeam: "",
+		charInitiative: 0,
 	};
+
+	const { values, errors, handleChange, handleSubmit, handleReset } =
+		useFormik({
+			initialValues,
+			onSubmit: () => {
+				const charList = JSON.stringify([...roster, values]);
+				const initiatives = [...initiativeList, values.charInitiative];
+				dispatch(setRoster(charList));
+				dispatch(setInitiativeList(initiatives));
+			},
+		});
 
 	return (
 		<Grid
@@ -73,9 +85,9 @@ export const PersonajeForm = ({ closeModal }) => {
 								Nombre
 							</InputLabel>
 							<OutlinedInput
-								id="name-input"
-								value={name}
-								onChange={(event) => setName(event.target.value)}
+								name="charName"
+								value={values.name}
+								onChange={handleChange}
 								label="Nombre"
 								type="text"
 								sx={{ color: "white" }}
@@ -91,9 +103,9 @@ export const PersonajeForm = ({ closeModal }) => {
 								Equipo
 							</InputLabel>
 							<OutlinedInput
-								id="team-input"
-								value={team}
-								onChange={(event) => setTeam(event.target.value)}
+								name="charTeam"
+								value={values.team}
+								onChange={handleChange}
 								label="Equipo"
 								type="text"
 								sx={{ color: "white" }}
@@ -111,9 +123,9 @@ export const PersonajeForm = ({ closeModal }) => {
 								Iniciativa
 							</InputLabel>
 							<OutlinedInput
-								id="initiative-input"
-								value={initiative}
-								onChange={(event) => setInitiative(event.target.value)}
+								name="charInitiative"
+								value={values.initiative}
+								onChange={handleChange}
 								label="Iniciativa"
 								type="number"
 								sx={{ color: "white" }}
