@@ -1,10 +1,10 @@
 // MUI
 import { Grid, Typography } from "@mui/material";
 // COMPONENTS
-import CombatantForm from "../components/combatV2Components/CombatantForm.jsx";
-import CombatantBattleCard from "../components/combatV2Components/CombatantBattleCard.jsx";
+import CombatantForm from "../components/Battle/combatV2Components/CombatantForm.jsx";
+import CombatantBattleCard from "../components/Battle/combatV2Components/CombatantBattleCard.jsx";
 // CUSTOM HOOKS
-import { useModal } from "../hooks/useModal";
+import { useModal } from "../hooks/useModal.js";
 // REDUX
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -17,7 +17,7 @@ import {
 	setRoster,
 } from "../store/slices/combatSlice.js";
 // REACT
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 // HELPERS
 import { initiativeResolver } from "../components/Battle/helpers/combatSetup/initiativeResolver.js";
 
