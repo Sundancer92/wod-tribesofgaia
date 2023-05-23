@@ -1,5 +1,5 @@
 // MUI
-import { Grid, Typography } from "@mui/material";
+import { Grid, Typography, Button } from "@mui/material";
 // COMPONENTS
 import CombatantForm from "../components/Battle/Components/CombatantForm.jsx";
 import CombatantBattleCard from "../components/Battle/Components/CombatantBattleCard.jsx";
@@ -53,8 +53,14 @@ export default function combatV2() {
 
 	return (
 		<Grid>
-			<Typography sx={{ color: "white" }}>Round: {combatRound}</Typography>
-
+			<Grid container direction="row" justifyContent="space-between">
+				<Typography xs={2} sx={{ color: "white", mt: 0.5 }}>
+					Round: {combatRound}
+				</Typography>
+				<Button sx={{ color: "divider" }} onClick={() => openModal()}>
+					Agregar Luchador
+				</Button>
+			</Grid>
 			<CombatantForm isModalOpen={isModalOpen} closeModal={closeModal} />
 			{battleInProgress &&
 				roster.map((p, index) => <CombatantBattleCard key={index} p={p} />)}

@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 // REDUX
 import { useSelector, useDispatch } from "react-redux";
+import { selectBattleInProgress } from "../../../store/slices/combatSlice";
 // MUI
 import {
 	Modal,
@@ -10,10 +11,15 @@ import {
 	Grid,
 	Button,
 	FormControl,
-	InputLabel,
+	FormLabel,
 	OutlinedInput,
 	Typography,
+	Select,
+	Switch,
+	MenuItem,
+	InputLabel,
 } from "@mui/material";
+
 // FORMIK
 import { useFormik } from "formik";
 import {
@@ -24,8 +30,16 @@ import {
 import { initiativeResolver } from "../helpers/combatSetup/initiativeResolver";
 
 export default function CombatantForm({ isModalOpen, closeModal }) {
-	const dispatch = useDispatch();
+	const battleInProgress = useSelector(selectBattleInProgress);
 	const roster = useSelector(selectRoster);
+
+	const [checked, setChecked] = useState(false);
+
+	const handleSwitchChange = (e) => {
+		setChecked(e.target.checked);
+	};
+
+	const dispatch = useDispatch();
 
 	const startButton = () => {
 		const { sortedRoster } = initiativeResolver(roster);
@@ -34,26 +48,32 @@ export default function CombatantForm({ isModalOpen, closeModal }) {
 		closeModal();
 	};
 
-	// useEffect(() => {
-	// 	console.log("Values FORM", roster);
-	// }, [roster]);
+	const continueBtn = () => {
+		closeModal();
+	};
 
 	const initialValues = {
 		name: "",
 		team: "",
 		initiative: "",
 		turns: 1,
+		status: "active",
 	};
 
-	const { values, handleChange, handleSubmit } = useFormik({
+	const { values, handleChange, handleSubmit, handleReset } = useFormik({
 		initialValues,
 		onSubmit: () => {
+			if (battleInProgress === true) {
+				values.initiative = 0;
+				values.status = "waitingNextRound";
+			}
 			dispatch(setRoster([...roster, values]));
+			handleReset();
 		},
 	});
 
 	return (
-		<Modal open={isModalOpen} onClose={closeModal}>
+		<Modal open={isModalOpen}>
 			<Box
 				sx={{
 					mx: "auto",
@@ -67,44 +87,133 @@ export default function CombatantForm({ isModalOpen, closeModal }) {
 					sx={{
 						p: 2,
 						borderRadius: 2,
-						bgcolor: "custom.dark",
-						color: "white",
+						bgcolor: "#494847",
+						// color: "white",
 					}}>
-					<Typography variant="h5"> Personaje</Typography>
+					<Grid container direction="row" justifyContent="space-between">
+						<Typography xs={8} variant="h5">
+							{checked === true
+								? "Luchador Existente"
+								: "Nuevo Luchador"}
+						</Typography>
+						<Switch
+							checked={checked}
+							onChange={handleSwitchChange}
+							color="warning"
+						/>
+					</Grid>
 					<form onSubmit={handleSubmit}>
-						<FormControl>
+						<FormControl sx={{ mb: 2 }}>
+							<InputLabel htmlFor="name">Nombre</InputLabel>
+							{checked === true ? (
+								<Select
+									required
+									sx={{ width: { xs: 252.5 }, color: "black" }}
+									name="name"
+									value={values.name}
+									onChange={handleChange}
+									label="Nomb">
+									<MenuItem value={"Nuevo Amanecer"}>
+										Nuevo Amanecer
+									</MenuItem>
+									<MenuItem value={"Eterno Acompañante"}>
+										Eterno Acompañante
+									</MenuItem>
+									<MenuItem value={"Mai"}>Mai</MenuItem>
+									<MenuItem value={"Velkan"}>Velkan</MenuItem>
+									<MenuItem value={"Corriente Cálida"}>
+										Corriente Cálida
+									</MenuItem>
+								</Select>
+							) : (
+								<OutlinedInput
+									sx={{ width: { xs: 252.5 } }}
+									required
+									name="name"
+									label="Nomb"
+									value={values.name}
+									onChange={handleChange}
+									type="text"
+								/>
+							)}
+						</FormControl>
+
+						<FormControl
+							sx={{
+								mb: 2,
+							}}>
+							<InputLabel htmlFor="Equipo">Equipo</InputLabel>
 							<OutlinedInput
-								required
-								name="name"
-								value={values.name}
+								sx={{ width: { xs: 252.5 } }}
+								fullWidth
+								name="team"
 								onChange={handleChange}
-								label="Nombre"
+								label="Equipo"
 								type="text"
+								value={values.team}
 							/>
 						</FormControl>
-						<FormControl>
-							<OutlinedInput
-								required
-								name="initiative"
-								value={values.initiative}
-								onChange={handleChange}
-								label="Iniciativa"
-								type="number"
-							/>
-						</FormControl>
-						<Button variant="contained" color="success" type="submit">
-							Guardar
-						</Button>
-						<Button
-							variant="contained"
-							color="error"
-							onClick={closeModal}>
-							Cerrar
-						</Button>
+						{battleInProgress === false ? (
+							<FormControl sx={{ mb: 2 }}>
+								<InputLabel htmlFor="Iniciativa">Iniciativa</InputLabel>
+								<OutlinedInput
+									sx={{ width: { xs: 252.5 } }}
+									required
+									name="initiative"
+									value={values.initiative}
+									onChange={handleChange}
+									label="Inicitive"
+									type="number"
+								/>
+							</FormControl>
+						) : (
+							""
+						)}
+
+						<Grid container direction="row" justifyContent="space-around">
+							<Button
+								xs={6}
+								sx={{ width: 120, bgcolor: "secondary.main" }}
+								variant="contained"
+								// color="secondary.main"
+								type="submit">
+								Guardar
+							</Button>
+							<Button
+								xs={6}
+								sx={{ width: 120 }}
+								variant="contained"
+								color="error"
+								onClick={() => {
+									handleReset(), closeModal();
+								}}>
+								Cerrar
+							</Button>
+						</Grid>
 					</form>
-					<Button variant="contained" color="error" onClick={startButton}>
-						COMENZAR
-					</Button>
+					{battleInProgress === true ? (
+						<Button
+							sx={{ mt: 2 }}
+							fullWidth
+							variant="contained"
+							color="success"
+							onClick={() => {
+								continueBtn(), handleReset();
+							}}>
+							CONTINUAR
+						</Button>
+					) : (
+						<Button
+							sx={{ mt: 2 }}
+							fullWidth
+							variant="contained"
+							color="success"
+							onClick={() => {
+								startButton(), handleReset();
+							}}>
+							COMENZAR
+						</Button>
+					)}
 				</Paper>
 			</Box>
 		</Modal>
