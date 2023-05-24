@@ -5,23 +5,30 @@ import {
 	removeFromInitiativeList,
 	selectHighestInitiative,
 	selectInitiativeList,
+	addDisabledCombatants,
+	removeDisabledCombatant,
+	addToInitiativeList,
 	selectRound,
+	selectDisabledCombatants,
 } from "../../../store/slices/combatSlice";
 
-export default function CombatantBattleCard({ p }) {
+export default function CombatantBattleCard({ p, i }) {
 	const dispatch = useDispatch();
+	const round = useSelector(selectRound);
 	const highestInitiative = useSelector(selectHighestInitiative);
 	const initiativeList = useSelector(selectInitiativeList);
+	const disabledCombatants = useSelector(selectDisabledCombatants);
 	const [char, setChar] = useState(p);
 	const [status, setStatus] = useState(char.status);
 	const [isActive, setActive] = useState(true);
 
-	// useEffect(() => {
-	// 	char.isActive === false ? setActive(false) : "";
-	// }, []);
+	useEffect(() => {
+		if (status === "disabled") {
+			dispatch(removeFromInitiativeList(char.initiative));
+		}
+	}, [status, round]);
 
 	useEffect(() => {
-		console.log(status);
 		if (status === "waitingNextRound" && initiativeList.length === 0) {
 			setStatus("active");
 		}
@@ -36,25 +43,43 @@ export default function CombatantBattleCard({ p }) {
 		}
 	}, [highestInitiative]);
 
+	// Si el estado es 'disabled', pasa a 'active' y se agrega la iniciativa del jugador a initiativeList y se remueve de la lista de disabledCombatants.
+	const incapacitateBtn = () => {
+		if (status === "disabled") {
+			setStatus("active");
+			if (char.initiative <= highestInitiative) {
+				dispatch(addToInitiativeList(char.initiative));
+			}
+			dispatch(removeDisabledCombatant(i));
+		} else {
+			setStatus("disabled");
+			dispatch(addDisabledCombatants(i));
+		}
+	};
+
 	const addExtraTurnBTN = () => {
 		console.log("BOTON RABIA FUNCIONA");
-		setChar({ ...char, turns: char.turns + 1 });
-		if (isActive === false && char.extraTurn === true) {
+		if (status !== "disabled") {
 			setChar({ ...char, turns: char.turns + 1 });
-		} else if (isActive === false) {
-			setChar({ ...char, extraTurn: true });
+			if (isActive === false && char.extraTurn === true) {
+				setChar({ ...char, turns: char.turns + 1 });
+			} else if (isActive === false) {
+				setChar({ ...char, extraTurn: true });
+			}
 		}
 	};
 
 	const endTurn = () => {
 		console.log("BOTON TERMINAR TURNO FUNCIONA");
-		if (char.turns > 1) {
-			setChar({ ...char, turns: char.turns - 1 });
-		} else if (char.turns === 1 && char.initiative === highestInitiative) {
-			dispatch(removeFromInitiativeList(char.initiative));
-			setActive(false);
-		} else if (char.turns === 1 && char.extraTurn === true) {
-			setChar({ ...char, extraTurn: false });
+		if (status !== "disabled") {
+			if (char.turns > 1) {
+				setChar({ ...char, turns: char.turns - 1 });
+			} else if (char.turns === 1 && char.initiative === highestInitiative) {
+				dispatch(removeFromInitiativeList(char.initiative));
+				setActive(false);
+			} else if (char.turns === 1 && char.extraTurn === true) {
+				setChar({ ...char, extraTurn: false });
+			}
 		}
 	};
 
@@ -144,17 +169,33 @@ export default function CombatantBattleCard({ p }) {
 							direction="row"
 							justifyContent="space-around"
 							align="center">
+							{/* BOTON RABIA */}
 							<Grid
 								item
 								// xs={3}
 								sx={{ mt: 2 }}>
 								<Button
+									disabled={status === "disabled"}
 									sx={{ p: 0.2 }}
 									variant="outlined"
 									onClick={() => addExtraTurnBTN()}>
 									RABIA
 								</Button>
 							</Grid>
+							{/* BOTON ESPERAR */}
+							<Grid
+								item
+								// xs={3}
+								sx={{ mt: 2 }}>
+								<Button
+									disabled={status === "disabled"}
+									sx={{ p: 0.2 }}
+									variant="outlined"
+									onClick={() => estadoBtn()}>
+									Esperar
+								</Button>
+							</Grid>
+							{/* BOTON INCPACITAR/RECAPACITAR */}
 							<Grid
 								item
 								// xs={3}
@@ -162,24 +203,19 @@ export default function CombatantBattleCard({ p }) {
 								<Button
 									sx={{ p: 0.2 }}
 									variant="outlined"
-									onClick={() => estadoBtn()}>
-									Esperar
+									onClick={() => incapacitateBtn()}>
+									{status === "disabled"
+										? "Recapacitar"
+										: "Incapacitar"}
 								</Button>
 							</Grid>
-							<Grid
-								item
-								// xs={3}
-								sx={{ mt: 2 }}>
-								<Button sx={{ p: 0.2 }} variant="outlined">
-									{" "}
-									Incapacitar{" "}
-								</Button>
-							</Grid>
+							{/* BOTON TERMINAR */}
 							<Grid
 								item
 								// xs={3}
 								sx={{ mt: 2 }}>
 								<Button
+									disabled={status === "disabled"}
 									sx={{ p: 0.2 }}
 									variant="outlined"
 									onClick={() => endTurn()}>

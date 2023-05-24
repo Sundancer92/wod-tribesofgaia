@@ -2,13 +2,12 @@ import { createSlice, current } from "@reduxjs/toolkit";
 import { HYDRATE } from "next-redux-wrapper";
 
 const initialState = {
-	battleInProgress: false,
-	roster: [],
 	round: 0,
-	highestInitiative: "",
+	roster: [],
 	initiativeList: [],
-	activePlayers: [],
-	playersWithBonusActions: [],
+	highestInitiative: "",
+	battleInProgress: false,
+	disabledCombatants: [],
 	waiting: [],
 	finished: [],
 };
@@ -17,6 +16,19 @@ export const combatSlice = createSlice({
 	name: "combatSlice",
 	initialState,
 	reducers: {
+		addDisabledCombatants: (state, action) => {
+			state.disabledCombatants.push(action.payload);
+		},
+		removeDisabledCombatant: (state, action) => {
+			const combatantIndex = action.payload;
+
+			if (current(state.disabledCombatants).includes(combatantIndex)) {
+				const filtered = state.disabledCombatants.filter(
+					(e) => e !== combatantIndex,
+				);
+				state.disabledCombatants = filtered;
+			}
+		},
 		setHighestInitiative: (state, action) => {
 			state.highestInitiative = action.payload;
 		},
@@ -42,6 +54,9 @@ export const combatSlice = createSlice({
 
 			state.initiativeList = initiativeList;
 		},
+		addToInitiativeList: (state, action) => {
+			state.initiativeList.push(action.payload);
+		},
 		setRoster: (state, action) => {
 			// state.roster = JSON.parse(action.payload);
 			state.roster = action.payload;
@@ -53,56 +68,14 @@ export const combatSlice = createSlice({
 			state.highestInitiative = "";
 			state.battleInProgress = false;
 			state.finished = [];
-			state.activePlayers = [];
-			state.playersWithBonusActions = [];
 			state.waiting = [];
 		},
 
 		addRound: (state) => {
 			state.round = state.round + 1;
 		},
-
-		addActivePlayers: (state, action) => {
-			const playerIndex = action.payload;
-			if (!state.activePlayers.includes(playerIndex)) {
-				state.activePlayers.push(playerIndex);
-			} else {
-				return;
-			}
-		},
-
-		removeActivePlayer: (state, action) => {
-			const playerIndex = action.payload;
-			// if (current(state.activePlayers).includes(playerIndex)) {
-			const filtered = state.activePlayers.filter((e) => e !== playerIndex);
-			state.activePlayers = filtered;
-			// }
-		},
-
-		addPlayersWithBonusActions: (state, action) => {
-			state.playersWithBonusActions.push(action.payload);
-		},
-
-		removePlayersWithBonusActions: (state, action) => {
-			const playerIndex = action.payload;
-			if (current(state.playersWithBonusActions).includes(playerIndex)) {
-				const filtered = state.playersWithBonusActions.filter(
-					(e) => e !== playerIndex,
-				);
-				state.playersWithBonusActions = filtered;
-			}
-		},
-
 		setFinished: (state, action) => {
 			state.finished.push(action.payload);
-		},
-		setNextRound: (state) => {
-			const rosterLength = current(state.roster).length;
-			const finishedLength = current(state.finished).length;
-			if (rosterLength === finishedLength) {
-				state.finished = [];
-				state.round = state.round + 1;
-			}
 		},
 	},
 	extraReducers: {
@@ -118,26 +91,24 @@ export const combatSlice = createSlice({
 export const {
 	setRoster,
 	clearRoster,
-	addActivePlayers,
-	removeActivePlayer,
-	addPlayersWithBonusActions,
-	removePlayersWithBonusActions,
 	setFinished,
-	setNextRound,
 	addRound,
 	setInitiativeList,
+	addToInitiativeList,
 	removeFromInitiativeList,
 	toogleBattleInProgress,
 	setHighestInitiative,
+	addDisabledCombatants,
+	removeDisabledCombatant,
 } = combatSlice.actions;
 // Select states
 export const selectRoster = (state) => state.combatSlice.roster;
 export const selectRound = (state) => state.combatSlice.round;
-export const selectActivePlayers = (state) => state.combatSlice.activePlayers;
+// export const selectActivePlayers = (state) => state.combatSlice.activePlayers;
 export const selectWaiting = (state) => state.combatSlice.waiting;
 export const selectFinished = (state) => state.combatSlice.finished;
-export const selectPlayersWithBonusActions = (state) =>
-	state.combatSlice.playersWithBonusActions;
+export const selectDisabledCombatants = (state) =>
+	state.combatSlice.disabledCombatants;
 export const selectInitiativeList = (state) => state.combatSlice.initiativeList;
 export const selectBattleInProgress = (state) =>
 	state.combatSlice.battleInProgress;
