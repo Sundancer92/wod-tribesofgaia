@@ -12,6 +12,7 @@ import {
 	selectInitiativeList,
 	selectRoster,
 	selectRound,
+	selectHighestInitiative,
 	setHighestInitiative,
 	setInitiativeList,
 	setRoster,
@@ -28,6 +29,7 @@ export default function combatV2() {
 	const battleInProgress = useSelector(selectBattleInProgress);
 	const roster = useSelector(selectRoster);
 	const initiativeList = useSelector(selectInitiativeList);
+	const highestIni = useSelector(selectHighestInitiative);
 
 	useEffect(() => {
 		roster.length === 0 ? openModal() : "";
@@ -63,7 +65,9 @@ export default function combatV2() {
 			</Grid>
 			<CombatantForm isModalOpen={isModalOpen} closeModal={closeModal} />
 			{battleInProgress &&
-				roster.map((p, index) => <CombatantBattleCard key={index} p={p} />)}
+				roster.map((p, index) => (
+					<CombatantBattleCard key={index} p={p} i={index} />
+				))}
 		</Grid>
 	);
 }

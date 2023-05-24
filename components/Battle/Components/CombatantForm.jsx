@@ -143,7 +143,7 @@ export default function CombatantForm({ isModalOpen, closeModal }) {
 								mb: 2,
 							}}>
 							<InputLabel htmlFor="Equipo">Equipo</InputLabel>
-							<OutlinedInput
+							{/* <OutlinedInput
 								sx={{ width: { xs: 252.5 } }}
 								fullWidth
 								name="team"
@@ -151,7 +151,22 @@ export default function CombatantForm({ isModalOpen, closeModal }) {
 								label="Equipo"
 								type="text"
 								value={values.team}
-							/>
+							/> */}
+							<Select
+								required
+								sx={{ width: { xs: 252.5 }, color: "black" }}
+								name="team"
+								value={values.team}
+								onChange={handleChange}
+								label="Equipo">
+								<MenuItem value={"El Orgullo de Raion Tatoru"}>
+									El Orgullo de Raion Tatoru
+								</MenuItem>
+								<MenuItem value={"Wyrm #1"}>Wyrm #1</MenuItem>
+								<MenuItem value={"Wyrm #2"}>Wyrm #2</MenuItem>
+								<MenuItem value={"Team A"}>Team A</MenuItem>
+								<MenuItem value={"Team B"}>Team B</MenuItem>
+							</Select>
 						</FormControl>
 						{battleInProgress === false ? (
 							<FormControl sx={{ mb: 2 }}>
