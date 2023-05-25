@@ -102,9 +102,9 @@ export default function CombatantBattleCard({ p, i }) {
 				mt: 0.5,
 				bgcolor:
 					isActive === true && char.turns > 0 && status === "active"
-						? "divider"
+						? "primary.light"
 						: char.turns > 0 && char.extraTurn
-						? "primary.dark"
+						? "success.light"
 						: "fff",
 			}}>
 			<Box sx={{ m: 1 }}>
@@ -113,6 +113,7 @@ export default function CombatantBattleCard({ p, i }) {
 						p: 2,
 						margin: "auto",
 						maxWidth: 500,
+						bgcolor: status === "disabled" && "info.dark",
 					}}
 					elevation={1}>
 					<Grid container spacing={2} justifyContent="space-between">
@@ -170,58 +171,65 @@ export default function CombatantBattleCard({ p, i }) {
 							justifyContent="space-around"
 							align="center">
 							{/* BOTON RABIA */}
-							<Grid
-								item
-								// xs={3}
-								sx={{ mt: 2 }}>
-								<Button
-									disabled={status === "disabled"}
-									sx={{ p: 0.2 }}
-									variant="outlined"
-									onClick={() => addExtraTurnBTN()}>
-									RABIA
-								</Button>
-							</Grid>
+							{status !== "disabled" && (
+								<Grid
+									item
+									// xs={3}
+									sx={{ mt: 2, ml: 2 }}>
+									<Button
+										disabled={status === "disabled"}
+										sx={{ p: 0.2 }}
+										variant="contained"
+										color="error"
+										onClick={() => addExtraTurnBTN()}>
+										RABIA
+									</Button>
+								</Grid>
+							)}
 							{/* BOTON ESPERAR */}
-							<Grid
-								item
-								// xs={3}
-								sx={{ mt: 2 }}>
-								<Button
-									disabled={status === "disabled"}
-									sx={{ p: 0.2 }}
-									variant="outlined"
-									onClick={() => estadoBtn()}>
-									Esperar
-								</Button>
-							</Grid>
+							{status !== "disabled" && (
+								<Grid
+									item
+									// xs={3}
+									sx={{ mt: 2 }}>
+									<Button
+										disabled={status === "disabled"}
+										sx={{ p: 0.2 }}
+										variant="contained"
+										color="warning"
+										onClick={() => estadoBtn()}>
+										Esperar
+									</Button>
+								</Grid>
+							)}
 							{/* BOTON INCPACITAR/RECAPACITAR */}
-							<Grid
-								item
-								// xs={3}
-								sx={{ mt: 2 }}>
+							<Grid item sx={{ mt: 2 }}>
 								<Button
-									sx={{ p: 0.2 }}
-									variant="outlined"
+									sx={{ p: 0.2, px: status === "disabled" ? 10 : "" }}
+									variant="contained"
+									color={
+										status === "disabled" ? "warning" : "secondary"
+									}
 									onClick={() => incapacitateBtn()}>
-									{status === "disabled"
-										? "Recapacitar"
-										: "Incapacitar"}
+									{status === "disabled" ? "Reanimar" : "Incapacitar"}
 								</Button>
 							</Grid>
 							{/* BOTON TERMINAR */}
-							<Grid
-								item
-								// xs={3}
-								sx={{ mt: 2 }}>
-								<Button
-									disabled={status === "disabled"}
-									sx={{ p: 0.2 }}
-									variant="outlined"
-									onClick={() => endTurn()}>
-									Terminar
-								</Button>
-							</Grid>
+							{status !== "disabled" && (
+								<Grid
+									item
+									// xs={3}
+									sx={{ mt: 2 }}>
+									<Button
+										// disabled={status === "disabled"}
+										sx={{ p: 0.2 }}
+										variant="contained"
+										color="info"
+										onClick={() => endTurn()}>
+										Terminar
+									</Button>
+								</Grid>
+							)}
 						</Grid>
 					</Grid>
 				</Paper>
