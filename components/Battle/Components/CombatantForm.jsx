@@ -18,6 +18,7 @@ import {
 	Switch,
 	MenuItem,
 	InputLabel,
+	Divider,
 } from "@mui/material";
 
 // FORMIK
@@ -78,16 +79,14 @@ export default function CombatantForm({ isModalOpen, closeModal }) {
 				sx={{
 					mx: "auto",
 					mt: "3rem",
-					p: 1,
-					borderRadius: 2,
-					bgcolor: "secondary.main",
-					width: { xs: 300 },
+					p: 0.5,
+					width: { xs: 293 },
 				}}>
 				<Paper
 					sx={{
 						p: 2,
 						borderRadius: 2,
-						bgcolor: "#494847",
+						// bgcolor: "primary.dark",
 						// color: "white",
 					}}>
 					<Grid container direction="row" justifyContent="space-between">
@@ -99,9 +98,10 @@ export default function CombatantForm({ isModalOpen, closeModal }) {
 						<Switch
 							checked={checked}
 							onChange={handleSwitchChange}
-							color="warning"
+							color="primary"
 						/>
 					</Grid>
+					<Divider sx={{ mb: 2, bgcolor: "primary.light" }} />
 					<form onSubmit={handleSubmit}>
 						<FormControl sx={{ mb: 2 }}>
 							<InputLabel htmlFor="name">Nombre</InputLabel>
@@ -177,7 +177,7 @@ export default function CombatantForm({ isModalOpen, closeModal }) {
 									name="initiative"
 									value={values.initiative}
 									onChange={handleChange}
-									label="Inicitive"
+									label="Iniciativa"
 									type="number"
 								/>
 							</FormControl>
@@ -188,8 +188,9 @@ export default function CombatantForm({ isModalOpen, closeModal }) {
 						<Grid container direction="row" justifyContent="space-around">
 							<Button
 								xs={6}
-								sx={{ width: 120, bgcolor: "secondary.main" }}
+								sx={{ width: 120 }}
 								variant="contained"
+								color="secondary"
 								// color="secondary.main"
 								type="submit">
 								Guardar

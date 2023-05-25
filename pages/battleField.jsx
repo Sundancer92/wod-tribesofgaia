@@ -56,10 +56,17 @@ export default function combatV2() {
 	return (
 		<Grid>
 			<Grid container direction="row" justifyContent="space-between">
-				<Typography xs={2} sx={{ color: "white", mt: 0.5 }}>
+				<Typography
+					xs={2}
+					sx={{ color: "white", mt: 1.5, ml: 2 }}
+					variant="h6">
 					Round: {combatRound}
 				</Typography>
-				<Button sx={{ color: "divider" }} onClick={() => openModal()}>
+				<Button
+					sx={{ mt: 1, mr: 2 }}
+					color="info"
+					variant="contained"
+					onClick={() => openModal()}>
 					Agregar Luchador
 				</Button>
 			</Grid>
