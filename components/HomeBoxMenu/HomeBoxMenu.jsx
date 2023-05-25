@@ -26,7 +26,7 @@ export default function HomeBoxMenu() {
 	return (
 		<Box
 			sx={{
-				bgcolor: "primary.dark",
+				bgcolor: "secondary.light",
 				boxShadow: 1,
 				borderRadius: 2,
 				p: 1,
@@ -55,9 +55,9 @@ export default function HomeBoxMenu() {
 								NUEVO COMBATE
 							</Link>
 						</ListItemButton>
-						<ListItemButton>
+						{/* <ListItemButton>
 							<Link href="/battleField">REANUDAR COMBATE</Link>
-						</ListItemButton>
+						</ListItemButton> */}
 					</List>
 				</Grid>
 			</Paper>
