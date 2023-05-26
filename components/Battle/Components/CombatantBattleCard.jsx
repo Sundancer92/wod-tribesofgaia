@@ -12,6 +12,8 @@ import {
 	selectDisabledCombatants,
 } from "../../../store/slices/combatSlice";
 
+import CombatantForm from "./CombatantForm";
+
 export default function CombatantBattleCard({ p, i }) {
 	const dispatch = useDispatch();
 	const round = useSelector(selectRound);

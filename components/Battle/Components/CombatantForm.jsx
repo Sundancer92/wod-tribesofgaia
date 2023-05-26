@@ -19,6 +19,7 @@ import {
 	MenuItem,
 	InputLabel,
 	Divider,
+	Badge,
 } from "@mui/material";
 
 // FORMIK
@@ -28,7 +29,10 @@ import {
 	selectRoster,
 	toogleBattleInProgress,
 } from "../../../store/slices/combatSlice";
+//HELPER
 import { initiativeResolver } from "../helpers/combatSetup/initiativeResolver";
+// DATA
+import { combatants } from "../Data/combatants";
 
 export default function CombatantForm({ isModalOpen, closeModal }) {
 	const battleInProgress = useSelector(selectBattleInProgress);
@@ -95,6 +99,12 @@ export default function CombatantForm({ isModalOpen, closeModal }) {
 								? "Luchador Existente"
 								: "Nuevo Luchador"}
 						</Typography>
+						{roster.length > 0 && (
+							<Badge
+								badgeContent={roster.length === 0 ? "0" : roster.length}
+								color="secondary"
+							/>
+						)}
 						<Switch
 							checked={checked}
 							onChange={handleSwitchChange}
@@ -113,17 +123,24 @@ export default function CombatantForm({ isModalOpen, closeModal }) {
 									value={values.name}
 									onChange={handleChange}
 									label="Nomb">
-									<MenuItem value={"Nuevo Amanecer"}>
+									{combatants.map((c, i) => {
+										if (!roster.some((obj) => obj.name === c.name)) {
+											return (
+												<MenuItem key={i} value={c.name}>
+													{c.name}
+												</MenuItem>
+											);
+										}
+										return null; // Opcionalmente, puedes devolver algo en caso contrario
+									})}
+									{/* <MenuItem value={"Nuevo Amanecer"}>
 										Nuevo Amanecer
-									</MenuItem>
-									<MenuItem value={"Eterno Acompañante"}>
-										Eterno Acompañante
 									</MenuItem>
 									<MenuItem value={"Mai"}>Mai</MenuItem>
 									<MenuItem value={"Velkan"}>Velkan</MenuItem>
 									<MenuItem value={"Corriente Cálida"}>
 										Corriente Cálida
-									</MenuItem>
+									</MenuItem> */}
 								</Select>
 							) : (
 								<OutlinedInput
