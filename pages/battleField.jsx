@@ -55,13 +55,13 @@ export default function combatV2() {
 
 	return (
 		<Grid>
-			<Grid container direction="row" justifyContent="space-between">
-				<Typography
+			<Grid container direction="row" justifyContent="flex-end">
+				{/* <Typography
 					xs={2}
 					sx={{ color: "white", mt: 1.5, ml: 2 }}
 					variant="h6">
 					Round: {combatRound}
-				</Typography>
+				</Typography> */}
 				<Button
 					sx={{ mt: 1, mr: 2 }}
 					color="info"
