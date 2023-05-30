@@ -1,6 +1,8 @@
 export const combatants = [
 	{
 		name: "Nuevo Amanecer",
+		tribe: "Silver_Fangs",
+		tribeGlyphs: `public/Glyph/Tribes/silver_fangs_glyph.png`,
 		team: "",
 	},
 	{
