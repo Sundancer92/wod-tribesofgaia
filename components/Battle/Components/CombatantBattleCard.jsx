@@ -1,3 +1,4 @@
+import styles from "./CombatantBattleCard.module.css";
 import { Box, Paper, Grid, Typography, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,6 +12,11 @@ import {
 	selectRound,
 	selectDisabledCombatants,
 } from "../../../store/slices/combatSlice";
+
+import CombatantBattleCardBGImage from "../../ImageHandlers/CombatantBattleCardBGImage";
+
+// HELPER
+import { teamNameFormater } from "../helpers/combatSetup/teamNameFormater";
 
 export default function CombatantBattleCard({ p, i }) {
 	const dispatch = useDispatch();
@@ -116,17 +122,26 @@ export default function CombatantBattleCard({ p, i }) {
 						bgcolor: status === "disabled" && "info.dark",
 					}}
 					elevation={1}>
-					<Grid container spacing={2} justifyContent="space-between">
+					<Grid
+						container
+						spacing={2}
+						justifyContent="space-between"
+						className={styles.battleCardContainer}>
+						<CombatantBattleCardBGImage customImagePath={char.team} />
 						{/* Contenedor Nombre y Equipo */}
-						<Grid item xs={6}>
+						<Grid item xs={8}>
 							<Grid container sx={{ pt: 0, pl: 1 }}>
 								<Grid item xs={12}>
-									<Typography variant="h6">{char.name}</Typography>
+									<Typography
+										variant="h6"
+										className="styles.battleCardContainer">
+										{char.name}
+									</Typography>
 								</Grid>
-								<Grid item xd={8}>
-									{/* <Typography align="right" variant="subtitle2">
-										{char.team}
-									</Typography> */}
+								<Grid item xd={12}>
+									<Typography align="left" variant="subtitle2">
+										{teamNameFormater(char.team)}
+									</Typography>
 								</Grid>
 							</Grid>
 						</Grid>

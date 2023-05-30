@@ -19,6 +19,7 @@ import {
 	MenuItem,
 	InputLabel,
 	Divider,
+	Badge,
 } from "@mui/material";
 
 // FORMIK
@@ -28,7 +29,10 @@ import {
 	selectRoster,
 	toogleBattleInProgress,
 } from "../../../store/slices/combatSlice";
+//HELPER
 import { initiativeResolver } from "../helpers/combatSetup/initiativeResolver";
+// DATA
+import { combatants } from "../Data/combatants";
 
 export default function CombatantForm({ isModalOpen, closeModal }) {
 	const battleInProgress = useSelector(selectBattleInProgress);
@@ -59,6 +63,7 @@ export default function CombatantForm({ isModalOpen, closeModal }) {
 		initiative: "",
 		turns: 1,
 		status: "active",
+		tribe: "",
 	};
 
 	const { values, handleChange, handleSubmit, handleReset } = useFormik({
@@ -95,6 +100,12 @@ export default function CombatantForm({ isModalOpen, closeModal }) {
 								? "Luchador Existente"
 								: "Nuevo Luchador"}
 						</Typography>
+						{roster.length > 0 && (
+							<Badge
+								badgeContent={roster.length === 0 ? "0" : roster.length}
+								color="secondary"
+							/>
+						)}
 						<Switch
 							checked={checked}
 							onChange={handleSwitchChange}
@@ -113,17 +124,24 @@ export default function CombatantForm({ isModalOpen, closeModal }) {
 									value={values.name}
 									onChange={handleChange}
 									label="Nomb">
-									<MenuItem value={"Nuevo Amanecer"}>
+									{combatants.map((c, i) => {
+										if (!roster.some((obj) => obj.name === c.name)) {
+											return (
+												<MenuItem key={i} value={c.name}>
+													{c.name}
+												</MenuItem>
+											);
+										}
+										return null;
+									})}
+									{/* <MenuItem value={"Nuevo Amanecer"}>
 										Nuevo Amanecer
-									</MenuItem>
-									<MenuItem value={"Eterno Acompañante"}>
-										Eterno Acompañante
 									</MenuItem>
 									<MenuItem value={"Mai"}>Mai</MenuItem>
 									<MenuItem value={"Velkan"}>Velkan</MenuItem>
 									<MenuItem value={"Corriente Cálida"}>
 										Corriente Cálida
-									</MenuItem>
+									</MenuItem> */}
 								</Select>
 							) : (
 								<OutlinedInput
@@ -159,11 +177,13 @@ export default function CombatantForm({ isModalOpen, closeModal }) {
 								value={values.team}
 								onChange={handleChange}
 								label="Equipo">
-								<MenuItem value={"El Orgullo de Raion Tatoru"}>
+								<MenuItem value={"el_orgullo_de_raion_tatoru"}>
 									El Orgullo de Raion Tatoru
 								</MenuItem>
-								<MenuItem value={"Wyrm #1"}>Wyrm #1</MenuItem>
-								<MenuItem value={"Wyrm #2"}>Wyrm #2</MenuItem>
+								<MenuItem value={"danzante_de_la_espiral_negra"}>
+									Danzante de la Espiral Negra
+								</MenuItem>
+								<MenuItem value={"vampiro"}>Vampiro</MenuItem>
 								<MenuItem value={"Team A"}>Team A</MenuItem>
 								<MenuItem value={"Team B"}>Team B</MenuItem>
 							</Select>
