@@ -63,6 +63,7 @@ export default function CombatantForm({ isModalOpen, closeModal }) {
 		initiative: "",
 		turns: 1,
 		status: "active",
+		tribe: "",
 	};
 
 	const { values, handleChange, handleSubmit, handleReset } = useFormik({
@@ -131,7 +132,7 @@ export default function CombatantForm({ isModalOpen, closeModal }) {
 												</MenuItem>
 											);
 										}
-										return null; // Opcionalmente, puedes devolver algo en caso contrario
+										return null;
 									})}
 									{/* <MenuItem value={"Nuevo Amanecer"}>
 										Nuevo Amanecer
@@ -176,11 +177,13 @@ export default function CombatantForm({ isModalOpen, closeModal }) {
 								value={values.team}
 								onChange={handleChange}
 								label="Equipo">
-								<MenuItem value={"El Orgullo de Raion Tatoru"}>
+								<MenuItem value={"el_orgullo_de_raion_tatoru"}>
 									El Orgullo de Raion Tatoru
 								</MenuItem>
-								<MenuItem value={"Wyrm #1"}>Wyrm #1</MenuItem>
-								<MenuItem value={"Wyrm #2"}>Wyrm #2</MenuItem>
+								<MenuItem value={"danzante_de_la_espiral_negra"}>
+									Danzante de la Espiral Negra
+								</MenuItem>
+								<MenuItem value={"vampiro"}>Vampiro</MenuItem>
 								<MenuItem value={"Team A"}>Team A</MenuItem>
 								<MenuItem value={"Team B"}>Team B</MenuItem>
 							</Select>
