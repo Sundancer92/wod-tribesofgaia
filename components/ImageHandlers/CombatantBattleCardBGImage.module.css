@@ -1,5 +1,6 @@
 .battleCardBGImage {
-	opacity: 20%;
-	max-width: 100px;
-	margin: auto;
+	opacity: 30%;
+	max-width: 500px;
+	max-height: 90px;
+	width: 50px;
 }

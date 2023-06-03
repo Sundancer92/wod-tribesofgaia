@@ -5,12 +5,11 @@ export default function CombatantBattleCardBGImage({ customImagePath }) {
 	return (
 		<Image
 			className={styles.battleCardBGImage}
-			src={"/../public/Glyph/Teams/" + customImagePath + ".png"}
+			src={"/static/public/Glyph/Teams/" + customImagePath + ".png"}
+			// src={"/../public/Glyph/Teams/" + customImagePath + ".png"}
 			alt={customImagePath}
 			fill
-			style={{ objectFit: "contain", objectPosition: "right" }}
-			// width={40}
-			// height={40}
+			style={{ objectFit: "scale-down", objectPosition: "125px 0px" }}
 		/>
 	);
 }

@@ -18,7 +18,7 @@ import CombatantBattleCardBGImage from "../../ImageHandlers/CombatantBattleCardB
 // HELPER
 import { teamNameFormater } from "../helpers/combatSetup/teamNameFormater";
 
-export default function CombatantBattleCard({ p, i }) {
+export default function CombatantBattleCard({ p, index }) {
 	const dispatch = useDispatch();
 	const round = useSelector(selectRound);
 	const highestInitiative = useSelector(selectHighestInitiative);
@@ -56,10 +56,10 @@ export default function CombatantBattleCard({ p, i }) {
 			if (char.initiative <= highestInitiative) {
 				dispatch(addToInitiativeList(char.initiative));
 			}
-			dispatch(removeDisabledCombatant(i));
+			dispatch(removeDisabledCombatant(index));
 		} else {
 			setStatus("disabled");
-			dispatch(addDisabledCombatants(i));
+			dispatch(addDisabledCombatants(index));
 		}
 	};
 

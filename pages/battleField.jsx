@@ -73,7 +73,7 @@ export default function combatV2() {
 			<CombatantForm isModalOpen={isModalOpen} closeModal={closeModal} />
 			{battleInProgress &&
 				roster.map((p, index) => (
-					<CombatantBattleCard key={index} p={p} i={index} />
+					<CombatantBattleCard key={index} p={p} index={index} />
 				))}
 		</Grid>
 	);
